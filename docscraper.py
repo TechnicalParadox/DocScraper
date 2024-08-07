@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import sys
 from urllib.parse import urljoin, urlparse, parse_qs
 from tqdm import tqdm
 
@@ -87,8 +88,18 @@ def scrape_and_save(url, base_path=None, links_visited=None, base_url_parts=None
         print(f"Error fetching URL: {url} - {e}")
 
 if __name__ == "__main__":
-    base_url = input("Enter a website URL: ")
-    links_visited = {}
-    scrape_and_save(base_url, links_visited=links_visited, base_url_parts=None)
+    if len(sys.argv) > 2 and sys.argv[2] == 'scrape_and_save': # check if function name is passed as argument
+        base_url = sys.argv[1] # read url from arguments
+        links_visited = {}
+        base_url_parts = urlparse(base_url)
+        scrape_and_save(base_url, links_visited=links_visited, base_url_parts=base_url_parts)
 
-    print("\nScraping complete!")
+        print("Scraping complete!")
+    else: # default behavior of script
+        base_url = input("Enter a website URL: ")
+        links_visited = {}
+        scrape_and_save(base_url, links_visited=links_visited, base_url_parts=None)
+
+        print("\nScraping complete! URLs visited:")
+        for link in links_visited:
+            print(link)
