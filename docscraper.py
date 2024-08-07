@@ -52,7 +52,7 @@ def scrape_and_save(url, base_path=None, links_visited=None, base_url_parts=None
         # Dynamically Create Save Path
         if base_path is None:
             base_path = os.path.dirname(os.path.abspath(__file__)) # Defaults to script directory.
-            base_path = os.join(base_path, 'scraped')  # Default save directory.
+            base_path = os.path.join(base_path, 'scraped')  # Default save directory.
         path_parts = [part for part in parsed_url.path.split('/') if part]
         save_dir = os.path.join(base_path, *path_parts)
         os.makedirs(save_dir, exist_ok=True)
