@@ -4,7 +4,7 @@ import os
 from urllib.parse import urljoin, urlparse, parse_qs
 from tqdm import tqdm
 
-def scrape_and_save(url, base_path="./scraped", links_visited=None, base_url_parts=None):
+def scrape_and_save(url, base_path=None, links_visited=None, base_url_parts=None):
     """Scrapes a webpage, including code blocks, and saves content.
 
     Args:
@@ -50,6 +50,8 @@ def scrape_and_save(url, base_path="./scraped", links_visited=None, base_url_par
             text_content = ""
 
         # Dynamically Create Save Path
+        if base_path is None:
+            base_path = os.path.dirname(os.path.abspath(__file__)) # Defaults to script directory.
         path_parts = [part for part in parsed_url.path.split('/') if part]
         save_dir = os.path.join(base_path, *path_parts)
         os.makedirs(save_dir, exist_ok=True)
