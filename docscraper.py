@@ -22,12 +22,14 @@ def scrape_and_save(url, base_path=None, links_visited=None, base_url_parts=None
         base_url_parts = urlparse(url)
 
     try:
-        print(f"Scraping: {url}")
         response = requests.get(url)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.content, 'html.parser')
         parsed_url = urlparse(url)
+
+        relative_path = parsed_url.path[len(base_url_parts.path):] 
+        print(relative_path)
 
         # Extracting Main Body Content (Including Code Blocks)
         main_content = soup.find('main')
@@ -53,8 +55,8 @@ def scrape_and_save(url, base_path=None, links_visited=None, base_url_parts=None
         if base_path is None:
             base_path = os.path.dirname(os.path.abspath(__file__)) # Defaults to script directory.
             base_path = os.path.join(base_path, 'scraped')  # Default save directory.
-        path_parts = [part for part in parsed_url.path.split('/') if part]
-        save_dir = os.path.join(base_path, *path_parts)
+        path_parts = [part for part in parsed_url.netloc.split('.') if part] + [part for part in parsed_url.path.split('/') if part] # Split by domain and path.
+        save_dir = os.path.join(base_path, *path_parts) # Create directory path from parts.
         os.makedirs(save_dir, exist_ok=True)
 
         # Create Unique Filename (Including URL Parameters)
@@ -89,6 +91,4 @@ if __name__ == "__main__":
     links_visited = {}
     scrape_and_save(base_url, links_visited=links_visited, base_url_parts=None)
 
-    print("\nScraping complete! URLs visited:")
-    for link in links_visited:
-        print(link)
+    print("\nScraping complete!")
